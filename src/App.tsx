@@ -1,19 +1,74 @@
-import { useEffect, useState } from "react";
-import { works, influences, type Work } from "./data";
+import { useEffect, useMemo, useState } from "react";
+import {
+  exhibitions,
+  influences,
+  projects,
+  works,
+  type Category,
+  type Work,
+} from "./data";
+
+const nav = [
+  ["#about", "About"],
+  ["#works", "Works"],
+  ["#projects", "Projects"],
+  ["#cv", "CV"],
+  ["#biography", "Biography"],
+  ["#publications", "Publications"],
+  ["#contacts", "Contacts"],
+] as const;
+
+const INSTAGRAM_URL =
+  "https://www.instagram.com/ashu_zewdu?igsi=ZDNlZDc0MzIxNw==";
+
+function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function ThemeIcon({ dark }: { dark: boolean }) {
+  return dark ? (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 3v1.6M12 19.4V21M4.2 4.2l1.1 1.1M18.7 18.7l1.1 1.1M3 12h1.6M19.4 12H21M4.2 19.8l1.1-1.1M18.7 5.3l1.1-1.1" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15.4 14.6A6.2 6.2 0 0 1 9.8 4.8 7 7 0 1 0 19.2 14a6.2 6.2 0 0 1-3.8.6z" />
+    </svg>
+  );
+}
 
 export default function App() {
   const [open, setOpen] = useState<Work | null>(null);
   const [menu, setMenu] = useState(false);
+  const [filter, setFilter] = useState<Category | "all">("all");
+  const [theme, setTheme] = useState<"light" | "dark">(() =>
+    typeof document !== "undefined" &&
+    document.documentElement.dataset.theme === "dark"
+      ? "dark"
+      : "light",
+  );
+
+  const visible = useMemo(
+    () => (filter === "all" ? works : works.filter((w) => w.category === filter)),
+    [filter],
+  );
 
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(null);
-      if (!open) return;
-      const i = works.findIndex((w) => w.id === open.id);
-      if (e.key === "ArrowRight") setOpen(works[(i + 1) % works.length]);
+      const i = visible.findIndex((w) => w.id === open.id);
+      if (i < 0) return;
+      if (e.key === "ArrowRight") setOpen(visible[(i + 1) % visible.length]);
       if (e.key === "ArrowLeft")
-        setOpen(works[(i - 1 + works.length) % works.length]);
+        setOpen(visible[(i - 1 + visible.length) % visible.length]);
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -21,9 +76,28 @@ export default function App() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [open, visible]);
 
   const closeNav = () => setMenu(false);
+
+  useEffect(() => {
+    const current =
+      document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    setTheme(current);
+  }, []);
+
+  const toggleTheme = () => {
+    const current =
+      document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    const next = current === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("az-theme", next);
+    } catch {
+      /* ignore */
+    }
+  };
 
   return (
     <>
@@ -31,72 +105,203 @@ export default function App() {
         <a className="mark" href="#top">
           AZ
         </a>
-        <button
-          className="nav-toggle"
-          aria-label="Menu"
-          aria-expanded={menu}
-          onClick={() => setMenu((m) => !m)}
-        >
-          <span />
-          <span />
-        </button>
-        <nav className={menu ? "open" : ""}>
-          <a href="#works" onClick={closeNav}>
-            Works
-          </a>
-          <a href="#about" onClick={closeNav}>
-            Biography
-          </a>
-          <a href="#statement" onClick={closeNav}>
-            Statement
-          </a>
-          <a href="#material" onClick={closeNav}>
-            Material
-          </a>
-        </nav>
+        <div className="nav-end">
+          <nav className={menu ? "open" : ""}>
+            {nav.map(([href, label]) => (
+              <a key={href} href={href} onClick={closeNav}>
+                {label}
+              </a>
+            ))}
+          </nav>
+          <div className="nav-tools">
+            <a
+              className="nav-icon"
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ashenafi Zewdu on Instagram"
+            >
+              <InstagramIcon />
+            </a>
+            <button
+              className="nav-icon"
+              type="button"
+              aria-label={
+                theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+              }
+              onClick={toggleTheme}
+            >
+              <ThemeIcon dark={theme === "dark"} />
+            </button>
+          </div>
+          <button
+            className="nav-toggle"
+            aria-label="Menu"
+            aria-expanded={menu}
+            onClick={() => setMenu((m) => !m)}
+          >
+            <span />
+            <span />
+          </button>
+        </div>
       </header>
 
       <main id="top">
-        <section className="hero">
-          <p className="eyebrow">Addis Ababa · Hawassa</p>
-          <h1>
-            Ashenafi
-            <em> Zewdu</em>
-          </h1>
-          <p className="lede">
-            Artist and architect working in cowhide, connecting visual art with
-            architecture through social, historical, and political form.
-          </p>
-          <div className="hero-meta">
-            <span>BFA Painting · MFA</span>
-            <span>BSc Architecture & Urban Planning</span>
-            <span>Lecturer, Hawassa University</span>
+        <section className="hero home-hero">
+          <div className="hero-copy">
+            <p className="eyebrow">Addis Ababa</p>
+            <h1>
+              Ashenafi
+              <em> Zewdu</em>
+            </h1>
+            <p className="lede">
+              Artist and architect working in different mediums, including
+              cowhide, connecting visual art with architecture through social,
+              historical, and political form.
+            </p>
+            <div className="hero-meta">
+              <span>BFA Painting · MFA</span>
+              <span>BSc Architecture & Urban Planning</span>
+              <span>Addis Ababa, Ethiopia</span>
+            </div>
+          </div>
+          <figure className="hero-art">
+            <img
+              src="/works/portrait-of-native.jpg"
+              alt="A Portrait of Native, hide on canvas"
+            />
+            <figcaption>
+              <strong>A Portrait of Native</strong>
+              <span>Hide on canvas · 60 × 40 cm</span>
+            </figcaption>
+          </figure>
+        </section>
+
+        <section id="about" className="section about-intro">
+          <div className="section-head">
+            <h2>About</h2>
+          </div>
+          <div className="prose wide">
+            <p>
+              Ashenafi Zewdu is an artist and architect based in Addis Ababa. He
+              works across figurative and non-figurative forms, using different
+              materials — especially cowhide, oil, collage, watercolor, and
+              mosaic — to connect visual art with architecture.
+            </p>
           </div>
         </section>
 
         <section id="works" className="section">
           <div className="section-head">
-            <h2>Selected works</h2>
-            <p>Hide on canvas, 2020–2026</p>
+            <h2>Works</h2>
+            <p>Figurative and non-figurative</p>
+          </div>
+          <div className="filters" role="tablist" aria-label="Artwork category">
+            {(
+              [
+                ["all", "All"],
+                ["figurative", "Figurative"],
+                ["nonfigurative", "Non-figurative"],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                className={filter === id ? "active" : ""}
+                onClick={() => setFilter(id)}
+              >
+                {label}
+              </button>
+            ))}
           </div>
           <div className="gallery">
-            {works.map((work) => (
+            {visible.map((work) => (
               <button
                 key={work.id}
-                className={`tile${work.featured ? " featured" : ""}`}
+                className="tile"
                 onClick={() => setOpen(work)}
               >
-                <img src={work.src} alt={work.alt} loading="lazy" />
+                <span className="tile-frame">
+                  <img src={work.src} alt={work.alt} loading="lazy" />
+                </span>
                 <span className="tile-cap">
                   <strong>{work.title}</strong>
-                  <em>{work.size}</em>
+                  <em>
+                    {work.medium}
+                    <br />
+                    {work.size}
+                    {work.year ? ` · ${work.year}` : ""}
+                  </em>
+                  {work.availability && (
+                    <span className={`status ${work.availability}`}>
+                      {work.availabilityNote ??
+                        (work.availability === "sold" ? "Sold" : "Available")}
+                    </span>
+                  )}
                 </span>
               </button>
             ))}
           </div>
         </section>
 
-        <section id="about" className="section about">
+        <section id="projects" className="section statement">
+          <div className="section-head">
+            <h2>Projects</h2>
+            <p>Public mosaic works I was involved in</p>
+          </div>
+          <div className="project-list">
+            {projects.map((project) => (
+              <article key={project.id} className="project">
+                <div className="project-images">
+                  {project.images.map((img) => (
+                    <img key={img.src} src={img.src} alt={img.alt} />
+                  ))}
+                </div>
+                <h3>
+                  {project.title} <span>{project.year}</span>
+                </h3>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="cv" className="section">
+          <div className="section-head">
+            <h2>CV</h2>
+          </div>
+          <div className="cv">
+            <div>
+              <h3>Education</h3>
+              <p>
+                <strong>MFA</strong> — Ale School of Fine Arts and Design, Addis
+                Ababa
+              </p>
+              <p>
+                <strong>BSc Architecture & Urban Planning</strong> — Addis
+                College, 2021
+              </p>
+              <p>
+                <strong>BFA Painting</strong> — Ale School of Fine Arts and
+                Design, 2020
+              </p>
+            </div>
+            <div>
+              <h3>Teaching</h3>
+              <p>
+                Lecturer, Department of Architecture and Urban Planning, Hawassa
+                University
+              </p>
+            </div>
+            <div>
+              <h3>Practice</h3>
+              <p>
+                Painting, mixed media, hide on canvas, and public mosaic
+                projects in Addis Ababa.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="biography" className="section about">
           <div className="section-head">
             <h2>Artist biography</h2>
             <p>Born 25 September 1996, Addis Ababa</p>
@@ -124,14 +329,15 @@ export default function App() {
               </p>
               <p>
                 He currently works as a lecturer in the Department of
-                Architecture and Urban Planning at Hawassa University.
+                Architecture and Urban Planning at Hawassa University, and lives
+                and practices in Addis Ababa.
               </p>
               <p>
                 Throughout his artistic process, Ashenafi has sought to connect
                 visual art with architecture, exploring social, historical, and
-                political themes. He works with a variety of materials, with a
-                particular focus on cowhide, and expresses his ideas through
-                both figurative and non-figurative forms.
+                political themes. He works with a variety of materials,
+                including cowhide, and expresses his ideas through both
+                figurative and non-figurative forms.
               </p>
               <p className="influences">
                 Influences: {influences.join(" · ")}
@@ -159,8 +365,7 @@ export default function App() {
               historical, and political themes. I work with different materials,
               especially cowhide, because in Ethiopia it has long been used to
               preserve history in the form of parchment (ብራና), as well as for
-              decoration, ornamentation, clothing, furniture, and other
-              purposes.
+              ornamentation, clothing, furniture, and other purposes.
             </p>
             <p>
               Cowhide also symbolizes nature, strength, durability, and a sense
@@ -198,18 +403,53 @@ export default function App() {
           <div className="material-grid">
             <img
               src="/works/material.jpg"
-              alt="Prepared cowhide spread on a workshop floor, the primary material of the practice"
+              alt="Prepared cowhide spread on a workshop floor"
             />
             <div>
-              <p className="eyebrow">Process</p>
-              <h2>Cowhide as archive</h2>
+              <p className="eyebrow">Materials</p>
+              <h2>Different mediums, including cowhide</h2>
               <p>
-                Hide is cut, pieced, and composed like a city plan: rectangles
-                for walls, elevations, and monuments. Hair-on cowhide carries
-                the memory of parchment (ብራና) while remaining a living,
-                architectural surface.
+                I work with different materials, especially cowhide, because in
+                Ethiopia it has long been used to preserve history in the form
+                of parchment (ብራና), as well as for ornamentation, clothing,
+                furniture, and other purposes.
               </p>
             </div>
+          </div>
+        </section>
+
+        <section id="publications" className="section">
+          <div className="section-head">
+            <h2>Publications & exhibitions</h2>
+          </div>
+          {exhibitions.map((show) => (
+            <article key={show.title} className="exhibition">
+              <h3>
+                {show.title} <span>{show.year}</span>
+              </h3>
+              <div className="exhibition-grid">
+                {show.images.map((img) => (
+                  <img key={img.src} src={img.src} alt={img.alt} />
+                ))}
+              </div>
+            </article>
+          ))}
+        </section>
+
+        <section id="contacts" className="section statement">
+          <div className="section-head">
+            <h2>Contacts</h2>
+          </div>
+          <div className="prose">
+            <p>
+              Ashenafi Zewdu
+              <br />
+              Addis Ababa, Ethiopia
+            </p>
+            <p className="mute">
+              For studio visits and inquiries, please write through the channels
+              shared privately.
+            </p>
           </div>
         </section>
       </main>
@@ -219,7 +459,7 @@ export default function App() {
           <strong>Ashenafi Zewdu</strong>
           <span>Painting · Architecture · Urban Planning</span>
         </div>
-        <p>Addis Ababa, Ethiopia · Hawassa University</p>
+        <p>Addis Ababa, Ethiopia</p>
       </footer>
 
       {open && (
@@ -241,6 +481,10 @@ export default function App() {
                 {open.medium}
                 <span> · </span>
                 {open.size}
+                {open.year ? ` · ${open.year}` : ""}
+                {open.availability
+                  ? ` · ${open.availabilityNote ?? (open.availability === "sold" ? "Sold" : "Available")}`
+                  : ""}
               </p>
             </figcaption>
           </figure>
