@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   exhibitions,
+  heroPortraitIds,
   influences,
   projects,
   works,
-  type Category,
+  worksFor,
   type Work,
+  type WorkFilter,
 } from "./data";
 
 const nav = [
@@ -47,7 +49,8 @@ function ThemeIcon({ dark }: { dark: boolean }) {
 export default function App() {
   const [open, setOpen] = useState<Work | null>(null);
   const [menu, setMenu] = useState(false);
-  const [filter, setFilter] = useState<Category | "all">("all");
+  const [filter, setFilter] = useState<WorkFilter>("all");
+  const [hero, setHero] = useState(0);
   const [theme, setTheme] = useState<"light" | "dark">(() =>
     typeof document !== "undefined" &&
     document.documentElement.dataset.theme === "dark"
@@ -55,9 +58,13 @@ export default function App() {
       : "light",
   );
 
-  const visible = useMemo(
-    () => (filter === "all" ? works : works.filter((w) => w.category === filter)),
-    [filter],
+  const visible = useMemo(() => worksFor(filter), [filter]);
+  const heroSlides = useMemo(
+    () =>
+      heroPortraitIds
+        .map((id) => works.find((work) => work.id === id))
+        .filter((work): work is Work => Boolean(work)),
+    [],
   );
 
   useEffect(() => {
@@ -85,6 +92,14 @@ export default function App() {
       document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     setTheme(current);
   }, []);
+
+  useEffect(() => {
+    if (heroSlides.length < 2) return;
+    const timer = window.setInterval(() => {
+      setHero((current) => (current + 1) % heroSlides.length);
+    }, 7200);
+    return () => window.clearInterval(timer);
+  }, [heroSlides.length]);
 
   const toggleTheme = () => {
     const current =
@@ -147,7 +162,23 @@ export default function App() {
       </header>
 
       <main id="top">
-        <section className="hero home-hero">
+        <section className="hero home-hero" aria-label="Ashenafi Zewdu">
+          <div className="hero-stage">
+            {heroSlides.map((slide, index) => (
+              <img
+                key={slide.id}
+                className={
+                  index === hero
+                    ? `is-active ken-${index % 2 === 0 ? "in" : "out"}`
+                    : ""
+                }
+                src={slide.src}
+                alt={slide.alt}
+              />
+            ))}
+            <div className="hero-veil" />
+            <div className="hero-grain" aria-hidden="true" />
+          </div>
           <div className="hero-copy">
             <p className="eyebrow">Addis Ababa</p>
             <h1>
@@ -164,17 +195,11 @@ export default function App() {
               <span>BSc Architecture & Urban Planning</span>
               <span>Addis Ababa, Ethiopia</span>
             </div>
+            <p className="hero-work">
+              {heroSlides[hero]?.title}
+              {heroSlides[hero]?.size ? ` · ${heroSlides[hero].size}` : ""}
+            </p>
           </div>
-          <figure className="hero-art">
-            <img
-              src="/works/portrait-of-native.jpg"
-              alt="A Portrait of Native, hide on canvas"
-            />
-            <figcaption>
-              <strong>A Portrait of Native</strong>
-              <span>Hide on canvas · 60 × 40 cm</span>
-            </figcaption>
-          </figure>
         </section>
 
         <section id="about" className="section about-intro">
@@ -200,8 +225,9 @@ export default function App() {
             {(
               [
                 ["all", "All"],
-                ["figurative", "Figurative"],
-                ["nonfigurative", "Non-figurative"],
+                ["figurative", "Figurative works"],
+                ["nonfigurative", "Non-figurative works"],
+                ["available", "Available works"],
               ] as const
             ).map(([id, label]) => (
               <button

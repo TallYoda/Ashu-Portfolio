@@ -7,8 +7,8 @@
   --hide: #6b3d2a;
   --ok: #3d5a3a;
   --line: rgba(28, 20, 15, 0.14);
-  --serif: "Cormorant Garamond", "Times New Roman", serif;
-  --sans: "Outfit", system-ui, sans-serif;
+  --serif: "Times New Roman", Times, serif;
+  --sans: "Times New Roman", Times, serif;
   color-scheme: light;
 }
 
@@ -149,47 +149,142 @@ a {
 }
 
 .hero {
-  padding: 12vh 6vw 10vh;
-  max-width: 58rem;
+  padding: 0;
+  max-width: none;
 }
 
 .home-hero {
-  max-width: none;
+  position: relative;
+  min-height: calc(100svh - 4.35rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 42vw);
-  gap: 4rem;
   align-items: end;
-  padding-top: 2.25rem;
-  padding-bottom: 6vh;
+  overflow: hidden;
+  color: #f4ece3;
+  padding: 0;
 }
 
-.hero-art {
-  margin: 0;
+.hero-stage {
+  position: absolute;
+  inset: 0;
 }
 
-.hero-art img {
+.hero-stage img {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 4 / 5;
+  height: 100%;
   object-fit: cover;
-  background: var(--paper);
+  opacity: 0;
+  transition: opacity 1.8s ease;
 }
 
-.hero-art figcaption {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 0.75rem;
-  font-size: 0.82rem;
+.hero-stage img.is-active {
+  opacity: 1;
 }
 
-.hero-art strong {
-  font-family: var(--serif);
-  font-size: 1.15rem;
-  font-weight: 500;
+.hero-stage img.ken-in.is-active {
+  animation: ken-in 8s ease-out forwards;
 }
 
-.hero-art span {
-  color: var(--mute);
+.hero-stage img.ken-out.is-active {
+  animation: ken-out 8s ease-out forwards;
+}
+
+@keyframes ken-in {
+  from {
+    transform: scale(1.14) translate3d(-2%, 1.2%, 0);
+  }
+  to {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ken-out {
+  from {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(2.2%, -1.4%, 0);
+  }
+}
+
+.hero-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(12, 8, 6, 0.46) 0%,
+    rgba(12, 8, 6, 0.32) 42%,
+    rgba(12, 8, 6, 0.74) 100%
+  );
+  pointer-events: none;
+}
+
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: radial-gradient(
+      rgba(255, 255, 255, 0.18) 0.6px,
+      transparent 0.7px
+    ),
+    radial-gradient(rgba(0, 0, 0, 0.28) 0.6px, transparent 0.8px);
+  background-size: 3px 3px, 4px 4px;
+  background-position: 0 0, 1px 2px;
+  animation: grain-shift 9s steps(2) infinite;
+}
+
+@keyframes grain-shift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-1%, 1%, 0);
+  }
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  padding: 18vh 6vw 9vh;
+  max-width: 46rem;
+}
+
+.home-hero .eyebrow,
+.home-hero .lede {
+  color: rgba(244, 236, 227, 0.86);
+}
+
+.home-hero h1 {
+  color: #f7f1ea;
+}
+
+.home-hero h1 em {
+  color: #e7c3a4;
+}
+
+.home-hero .hero-meta {
+  color: rgba(244, 236, 227, 0.72);
+  border-top-color: rgba(244, 236, 227, 0.22);
+}
+
+.hero-work {
+  margin: 1.35rem 0 0;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(244, 236, 227, 0.68);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stage img,
+  .hero-grain {
+    animation: none !important;
+    transition: opacity 0.4s ease;
+  }
 }
 
 .eyebrow {
@@ -265,6 +360,7 @@ a {
 
 .filters {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin: -0.6rem 0 2rem;
 }
@@ -583,7 +679,6 @@ footer span {
 }
 
 @media (max-width: 900px) {
-  .home-hero,
   .about-grid,
   .material-grid,
   .cv,
@@ -592,7 +687,6 @@ footer span {
     grid-template-columns: 1fr 1fr;
   }
 
-  .home-hero,
   .about-grid,
   .material-grid,
   .cv {

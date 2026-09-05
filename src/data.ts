@@ -59,12 +59,12 @@ export const works: Work[] = [
     category: "figurative",
   },
   {
-    id: "portrait-profile",
+    id: "portrait-teal",
     title: "Portrait",
     medium: "Hide on canvas (ቆዳ በ ሸራ ላይ) and acrylic on canvas",
     size: "Studio photograph",
-    src: "/works/portrait-profile.jpg",
-    alt: "Hide mosaic profile portrait against a muted ground",
+    src: "/works/portrait-teal.jpg",
+    alt: "Hide mosaic portrait against a teal ground",
     category: "figurative",
   },
   {
@@ -83,7 +83,7 @@ export const works: Work[] = [
     size: "60 × 40 cm",
     src: "/works/unwritten-history-01.jpg",
     alt: "First work in the Unwritten History series",
-    category: "figurative",
+    category: "nonfigurative",
     availability: "sold",
   },
   {
@@ -93,7 +93,7 @@ export const works: Work[] = [
     size: "60 × 40 cm",
     src: "/works/unwritten-history-02.jpg",
     alt: "Second work in the Unwritten History series",
-    category: "figurative",
+    category: "nonfigurative",
   },
   {
     id: "unwritten-history-3",
@@ -102,7 +102,7 @@ export const works: Work[] = [
     size: "60 × 40 cm",
     src: "/works/unwritten-history-03.jpg",
     alt: "Third work in the Unwritten History series",
-    category: "figurative",
+    category: "nonfigurative",
   },
   {
     id: "native-knowledge",
@@ -262,6 +262,26 @@ export const works: Work[] = [
     alt: "Four-panel mixed-media composition of color blocks and collage",
     category: "nonfigurative",
   },
+  {
+    id: "fendika-01",
+    title: "Exhibition, Fendika Cultural Center",
+    medium: "Installation view",
+    size: "Fendika Cultural Center",
+    year: "2023",
+    src: "/exhibitions/fendika-01.jpg",
+    alt: "Installation view at Fendika Cultural Center, 2023",
+    category: "figurative",
+  },
+  {
+    id: "fendika-02",
+    title: "Exhibition, Fendika Cultural Center",
+    medium: "Installation view",
+    size: "Fendika Cultural Center",
+    year: "2023",
+    src: "/exhibitions/fendika-02.jpg",
+    alt: "Gallery wall at Fendika Cultural Center, 2023",
+    category: "figurative",
+  },
 ];
 
 export const projects: Project[] = [
@@ -346,6 +366,99 @@ export const exhibitions = [
     ],
   },
 ];
+
+export const workOrder = {
+  all: [
+    "portrait-of-native",
+    "monumental-city",
+    "floating-city",
+    "unconscious-urban-sprawl",
+    "untitled-hide",
+    "city-of-monuments",
+    "concealment",
+    "native-knowledge",
+    "african-masks",
+    "portrait-teal",
+    "portrait-of-native-acrylic",
+    "hands-of-native",
+    "leg-of-native",
+    "unwritten-history-1",
+    "unwritten-history-2",
+    "impression-addis",
+    "monumental-person",
+    "section-of-city",
+    "contradiction-120",
+    "contradiction-couple",
+    "contradiction-cap",
+    "self-portrait-2023",
+    "untitled-mixed-2023",
+    "fendika-01",
+    "fendika-02",
+  ],
+  figurative: [
+    "portrait-of-native",
+    "native-knowledge",
+    "african-masks",
+    "portrait-teal",
+    "portrait-of-native-acrylic",
+    "hands-of-native",
+    "leg-of-native",
+    "monumental-person",
+    "contradiction-120",
+    "contradiction-couple",
+    "contradiction-cap",
+    "self-portrait-2023",
+  ],
+  nonfigurative: [
+    "monumental-city",
+    "unconscious-urban-sprawl",
+    "untitled-hide",
+    "floating-city",
+    "concealment",
+    "unwritten-history-1",
+    "unwritten-history-2",
+    "unwritten-history-3",
+    "impression-addis",
+    "section-of-city",
+    "untitled-mixed-2023",
+    "city-of-monuments",
+  ],
+  available: [
+    "monumental-city",
+    "unconscious-urban-sprawl",
+    "floating-city",
+    "native-knowledge",
+    "african-masks",
+    "portrait-teal",
+    "portrait-of-native-acrylic",
+    "hands-of-native",
+    "leg-of-native",
+    "unwritten-history-2",
+    "impression-addis",
+    "monumental-person",
+    "section-of-city",
+    "contradiction-120",
+    "contradiction-couple",
+    "contradiction-cap",
+    "untitled-mixed-2023",
+    "concealment",
+    "city-of-monuments",
+  ],
+} as const;
+
+export type WorkFilter = keyof typeof workOrder;
+
+export const heroPortraitIds = [
+  "portrait-of-native",
+  "portrait-of-native-acrylic",
+] as const;
+
+export function worksFor(filter: WorkFilter): Work[] {
+  const byId = new Map(works.map((work) => [work.id, work]));
+  return workOrder[filter]
+    .map((id) => byId.get(id))
+    .filter((work): work is Work => Boolean(work));
+}
 
 export const influences = [
   "Piet Mondrian",
