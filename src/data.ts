@@ -4,7 +4,7 @@ export type Work = {
   id: string;
   title: string;
   medium: string;
-  size: string;
+  size?: string;
   year?: string;
   src: string;
   alt: string;
@@ -62,7 +62,6 @@ export const works: Work[] = [
     id: "portrait-teal",
     title: "Portrait",
     medium: "Hide on canvas (ቆዳ በ ሸራ ላይ) and acrylic on canvas",
-    size: "Studio photograph",
     src: "/works/portrait-teal.jpg",
     alt: "Hide mosaic portrait against a teal ground",
     category: "figurative",

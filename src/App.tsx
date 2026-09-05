@@ -253,9 +253,12 @@ export default function App() {
                   <strong>{work.title}</strong>
                   <em>
                     {work.medium}
-                    <br />
-                    {work.size}
-                    {work.year ? ` · ${work.year}` : ""}
+                    {work.size || work.year ? (
+                      <>
+                        <br />
+                        {[work.size, work.year].filter(Boolean).join(" · ")}
+                      </>
+                    ) : null}
                   </em>
                   {work.availability && (
                     <span className={`status ${work.availability}`}>
@@ -504,13 +507,17 @@ export default function App() {
             <figcaption>
               <h3 id="lb-title">{open.title}</h3>
               <p>
-                {open.medium}
-                <span> · </span>
-                {open.size}
-                {open.year ? ` · ${open.year}` : ""}
-                {open.availability
-                  ? ` · ${open.availabilityNote ?? (open.availability === "sold" ? "Sold" : "Available")}`
-                  : ""}
+                {[
+                  open.medium,
+                  open.size,
+                  open.year,
+                  open.availability
+                    ? (open.availabilityNote ??
+                      (open.availability === "sold" ? "Sold" : "Available"))
+                    : undefined,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
               </p>
             </figcaption>
           </figure>
