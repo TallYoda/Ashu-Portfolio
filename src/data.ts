@@ -63,7 +63,7 @@ export const works: Work[] = [
     title: "Portrait",
     medium: "Hide on canvas (ቆዳ በ ሸራ ላይ) and acrylic on canvas",
     src: "/works/portrait-teal.jpg",
-    alt: "Hide mosaic portrait against a teal ground",
+    alt: "Hide mosaic portrait of a man against a light ground",
     category: "figurative",
   },
   {
@@ -447,10 +447,7 @@ export const workOrder = {
 
 export type WorkFilter = keyof typeof workOrder;
 
-export const heroPortraitIds = [
-  "portrait-of-native",
-  "portrait-of-native-acrylic",
-] as const;
+export const heroPortraitId = "portrait-of-native";
 
 export function worksFor(filter: WorkFilter): Work[] {
   const byId = new Map(works.map((work) => [work.id, work]));
