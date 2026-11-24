@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import ContactForm from "./ContactForm";
 import {
   exhibitions,
   heroPortraitId,
@@ -467,16 +468,19 @@ export default function App() {
           <div className="section-head">
             <h2>Contacts</h2>
           </div>
-          <div className="prose">
-            <p>
-              Ashenafi Zewdu
-              <br />
-              Addis Ababa, Ethiopia
-            </p>
-            <p className="mute">
-              For studio visits and inquiries, please write through the channels
-              shared privately.
-            </p>
+          <div className="contact-layout">
+            <div className="prose">
+              <p>
+                Ashenafi Zewdu
+                <br />
+                Addis Ababa, Ethiopia
+              </p>
+              <p className="mute">
+                For studio visits and inquiries, write through the form or the
+                channels shared privately.
+              </p>
+            </div>
+            <ContactForm />
           </div>
         </section>
       </main>
@@ -486,7 +490,19 @@ export default function App() {
           <strong>Ashenafi Zewdu</strong>
           <span>Painting · Architecture · Urban Planning</span>
         </div>
-        <p>Addis Ababa, Ethiopia</p>
+        <div className="footer-links">
+          <a href="mailto:zewduashenafi281@gmail.com">
+            zewduashenafi281@gmail.com
+          </a>
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Instagram
+          </a>
+          <p>Addis Ababa, Ethiopia</p>
+        </div>
       </footer>
 
       {open && (
