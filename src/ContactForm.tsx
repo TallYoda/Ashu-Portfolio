@@ -10,13 +10,14 @@ export default function ContactForm() {
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
-    const name = String(data.get("from_name") ?? "").trim();
-    const email = String(data.get("from_email") ?? "").trim();
+    const title = String(data.get("title") ?? "").trim();
+    const name = String(data.get("name") ?? "").trim();
+    const email = String(data.get("email") ?? "").trim();
     const message = String(data.get("message") ?? "").trim();
 
-    if (!name || !email || !message) {
+    if (!title || !name || !email || !message) {
       setStatus("error");
-      setError("Please fill in your name, email, and message.");
+      setError("Please fill in the title, name, email, and message.");
       return;
     }
 
@@ -36,10 +37,10 @@ export default function ContactForm() {
         serviceId,
         templateId,
         {
-          from_name: name,
-          from_email: email,
+          title,
+          name,
+          email,
           message,
-          reply_to: email,
         },
         { publicKey },
       );
@@ -54,10 +55,20 @@ export default function ContactForm() {
   return (
     <form className="contact-form" onSubmit={onSubmit} noValidate>
       <label>
+        Title
+        <input
+          type="text"
+          name="title"
+          autoComplete="off"
+          required
+          disabled={status === "sending"}
+        />
+      </label>
+      <label>
         Name
         <input
           type="text"
-          name="from_name"
+          name="name"
           autoComplete="name"
           required
           disabled={status === "sending"}
@@ -67,7 +78,7 @@ export default function ContactForm() {
         Email
         <input
           type="email"
-          name="from_email"
+          name="email"
           autoComplete="email"
           required
           disabled={status === "sending"}
