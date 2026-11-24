@@ -23,7 +23,7 @@ export type Project = {
 export const works: Work[] = [
   {
     id: "portrait-of-native",
-    title: "A Portrait of Native",
+    title: "A Portrait of Native I",
     medium: "Hide on canvas (ቆዳ በ ሸራ ላይ)",
     size: "60 × 40 cm",
     src: "/works/portrait-of-native.jpg",
@@ -33,10 +33,10 @@ export const works: Work[] = [
   },
   {
     id: "portrait-of-native-acrylic",
-    title: "A Portrait of Native",
+    title: "A Portrait of Native III",
     medium: "Hide on canvas (ቆዳ በ ሸራ ላይ) and acrylic on canvas",
     size: "80 × 60 cm",
-    src: "/works/portrait-of-native-acrylic.jpg",
+    src: "/works/portrait-of-native-3.jpg",
     alt: "Hide mosaic portrait of a man against a light acrylic ground",
     category: "figurative",
   },
@@ -60,7 +60,7 @@ export const works: Work[] = [
   },
   {
     id: "portrait-teal",
-    title: "Portrait",
+    title: "A Portrait of Native II",
     medium: "Hide on canvas (ቆዳ በ ሸራ ላይ) and acrylic on canvas",
     src: "/works/portrait-teal.jpg",
     alt: "Hide mosaic portrait of a man against a light ground",

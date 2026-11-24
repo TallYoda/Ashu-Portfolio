@@ -166,12 +166,16 @@ export default function App() {
             )}
             <div className="hero-veil" />
           </div>
-          <div className="hero-copy">
-            <p className="eyebrow">Addis Ababa</p>
-            <h1>
-              Ashenafi
-              <em> Zewdu</em>
-            </h1>
+          <div className="hero-caption">
+            <div className="hero-id">
+              <p className="eyebrow">Artist and Architect</p>
+              <h1>
+                Ashenafi
+                <span>Zewdu</span>
+              </h1>
+              <p className="hero-role">Addis Ababa</p>
+            </div>
+            <div className="hero-copy">
             <p className="lede">
               Artist and architect working in different mediums, including
               cowhide, connecting visual art with architecture through social,
@@ -188,19 +192,24 @@ export default function App() {
                 {heroWork.size ? ` · ${heroWork.size}` : ""}
               </p>
             )}
+            </div>
           </div>
         </section>
 
         <section id="about" className="section about-intro">
-          <div className="section-head">
-            <h2>About</h2>
+          <div className="about-bg" aria-hidden="true">
+            <img src="/about-hide.png" alt="" />
           </div>
-          <div className="prose wide">
+          <div className="about-copy">
+            <p className="eyebrow">Artist & Architect</p>
+            <h2>About</h2>
+            <p className="about-lede">
+              Ashenafi Zewdu is an artist and architect based in Addis Ababa.
+            </p>
             <p>
-              Ashenafi Zewdu is an artist and architect based in Addis Ababa. He
-              works across figurative and non-figurative forms, using different
-              materials — especially cowhide, oil, collage, watercolor, and
-              mosaic — to connect visual art with architecture.
+              He works across figurative and non-figurative forms, using
+              different materials — especially cowhide, oil, collage,
+              watercolor, and mosaic — to connect visual art with architecture.
             </p>
           </div>
         </section>
